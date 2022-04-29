@@ -2,6 +2,8 @@ package jp.co.tonaise.rest.webservice.restfulwebservice.user;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,7 +46,7 @@ public class UserResource {
     // input - details of user
     // output - CREATED & Return the created URI
     @PostMapping("/users")
-    public User createUser(@RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
 	User savedUser = service.save(user);
 	// CREATED
 	// /user/4
