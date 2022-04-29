@@ -1,4 +1,4 @@
-package jp.co.tonaise.rest.webservice.restfulwebservice;
+package jp.co.tonaise.rest.webservice.restfulwebservice.helloworld;
 
 public class HelloWorldBean {
     @Override
