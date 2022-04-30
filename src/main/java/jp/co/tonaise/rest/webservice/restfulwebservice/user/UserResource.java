@@ -1,10 +1,15 @@
 package jp.co.tonaise.rest.webservice.restfulwebservice.user;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,12 +32,23 @@ public class UserResource {
     // GET /users/{id}
     // retriveUserint id)
     @GetMapping("users/{id}")
-    public User retrieveUser(@PathVariable int id) {
+    public EntityModel<User> retrieveUser(@PathVariable int id) {
 	User user = service.findOne(id);
-	if (user == null) {
+
+	if (user == null)
 	    throw new UserNotFoundException("id-" + id);
-	}
-	return user;
+
+	// "all-users", SERVER_PATH + "/users"
+	// retrieveAllUsers
+	EntityModel<User> resource = EntityModel.of(user);
+
+	WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).retrieveAllUsers());
+
+	resource.add(linkTo.withRel("all-users"));
+
+	// HATEOAS
+
+	return resource;
     }
 
     @DeleteMapping("users/{id}")
