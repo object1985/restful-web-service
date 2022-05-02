@@ -51,18 +51,12 @@ public class UserResource {
 	return resource;
     }
 
-    @DeleteMapping("users/{id}")
-    public void deleteUser(@PathVariable int id) {
-	User deletedUser = service.deleteById(id);
-	if (deletedUser == null) {
-	    throw new UserNotFoundException("id-" + id);
-	}
-    }
-
     // input - details of user
     // output - CREATED & Return the created URI
     @PostMapping("/users")
-    public User createUser(@Valid @RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) throws DuplicatedException {
+	Integer targetId = user.getId();
+	checkDuplicated(targetId);
 	User savedUser = service.save(user);
 	// CREATED
 	// /user/4
@@ -73,4 +67,20 @@ public class UserResource {
 	return savedUser;
     }
 
+    private void checkDuplicated(Integer targetId) throws DuplicatedException {
+	if (targetId != null) {
+	    boolean duplicated = retrieveAllUsers().stream().anyMatch(e -> targetId == e.getId());
+	    if (duplicated) {
+		throw new DuplicatedException("user id is duplicated.[id]:" + targetId);
+	    }
+	}
+    }
+
+    @DeleteMapping("users/{id}")
+    public void deleteUser(@PathVariable int id) {
+	User deletedUser = service.deleteById(id);
+	if (deletedUser == null) {
+	    throw new UserNotFoundException("id-" + id);
+	}
+    }
 }
