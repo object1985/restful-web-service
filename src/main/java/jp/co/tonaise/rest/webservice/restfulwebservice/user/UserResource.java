@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.ApiParam;
+
 @RestController
 public class UserResource {
     @Autowired
@@ -32,7 +34,7 @@ public class UserResource {
     // GET /users/{id}
     // retriveUserint id)
     @GetMapping("users/{id}")
-    public EntityModel<User> retrieveUser(@PathVariable int id) {
+    public EntityModel<User> retrieveUser(@ApiParam(value = "User id", example = "1") @PathVariable int id) {
 	User user = service.findOne(id);
 
 	if (user == null)
