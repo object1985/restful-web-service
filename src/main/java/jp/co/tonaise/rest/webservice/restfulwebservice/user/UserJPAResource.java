@@ -26,6 +26,9 @@ public class UserJPAResource {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PostRepository postRepository;
+
     // Get /users
     // retriveAllUsers
     @GetMapping("/jpa/users")
@@ -84,6 +87,30 @@ public class UserJPAResource {
     public void deleteUser(@PathVariable int id) {
 	userRepository.deleteById(id);
 	System.out.println("delete fin.");
+    }
+
+    @GetMapping("/jpa/users/{id}/posts")
+    public List<Post> retrieveAllUsers(@PathVariable int id) {
+	Optional<User> userOptional = userRepository.findById(id);
+	if (userOptional.isPresent()) {
+	    throw new UserNotFoundException("id-" + id);
+	}
+	return userOptional.get().getPosts();
+    }
+
+    @PostMapping("/jpa//users/{id}/posts")
+    public Post createPost(@PathVariable int id, @RequestBody Post post) throws DuplicatedException {
+	Optional<User> userOptional = userRepository.findById(id);
+	if (!userOptional.isPresent()) {
+	    throw new UserNotFoundException("id-" + id);
+	}
+
+	// CREATED
+	User user = userOptional.get();
+	post.setUser(user);
+	Post savedPost = postRepository.save(post);
+
+	return savedPost;
     }
 
 }
